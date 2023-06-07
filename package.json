@@ -16,7 +16,12 @@
     "jiti": "^1.18.2"
   },
   "dependencies": {
+    "@clack/core": "^0.3.2",
+    "@clack/prompts": "^0.6.3",
+    "execa": "^7.1.1",
     "got": "^13.0.0",
+    "ora": "^6.3.1",
+    "picocolors": "^1.0.0",
     "semver": "^7.5.1",
     "which": "^3.0.1"
   }
