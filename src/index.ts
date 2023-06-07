@@ -6,6 +6,11 @@ import which from 'which';
 const NVCHAD_INSTALL_DOCS_URL = "https://nvchad.com/docs/quickstart/install";
 let NEOVIM_VERSION_REGEX = /github\.com\/neovim\/neovim\/releases\/tag\/v(\d+\.\d+\.\d+)/g
 
+async function is_internet_connected() {
+  let isConnected = !!await require('dns').promises.resolve('google.com').catch(()=>{});
+  return isConnected;
+}
+
 async function minimum_neovim_required(url:string) {
   const response = await got(url);
   const body = response.body;
@@ -23,11 +28,16 @@ async function is_neovim_installed() {
 }
 
 async function main() {
-  const minimum_version = await minimum_neovim_required(NVCHAD_INSTALL_DOCS_URL);
+  const internet_alive = await is_internet_connected();
   const is_installed = await is_neovim_installed();
+  const minimum_version = await minimum_neovim_required(NVCHAD_INSTALL_DOCS_URL);
+  console.log(`Internet Status: ${internet_alive}`);
   console.log(`Minimum Neovim Version Required: ${minimum_version}`);
   console.log(`Is Neovim installed: ${is_installed}`)
 }
 
 
 main().then();
+
+
+
