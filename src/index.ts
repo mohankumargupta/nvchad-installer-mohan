@@ -1,29 +1,32 @@
 import got from 'got';
+import semver from 'semver';
+import which from 'which';
 
 
 const NVCHAD_INSTALL_DOCS_URL = "https://nvchad.com/docs/quickstart/install";
-let NEOVIM_VERSION_REGEX = /(script)/g;
+let NEOVIM_VERSION_REGEX = /github\.com\/neovim\/neovim\/releases\/tag\/v(\d+\.\d+\.\d+)/g
 
-async function neovim_version(url:string) {
+async function minimum_neovim_required(url:string) {
   const response = await got(url);
   const body = response.body;
-  console.log(body);
-  const regex = NEOVIM_VERSION_REGEX.toString();
-  console.log(regex);
-  const result = [...body.matchAll(/v(\d+)\.(\d+)\.(\d+)/g)];
-  console.log(result);
-  const major_version = result[0][1];
-  console.log(major_version);
-  const minor_version = result[0][2];
-  console.log(minor_version);
-  const patch_version = result[0][3];
-  console.log(patch_version);
-  
+  const result = [...body.matchAll(NEOVIM_VERSION_REGEX)];
+  const version = result[0][1]
+  return version;
+}
 
+async function is_neovim_installed() {
+  const result = await which('nvim', { nothrow: true });
+  if (result == null) {
+    return false;
+  }
+  return true;
 }
 
 async function main() {
-  const version = await neovim_version(NVCHAD_INSTALL_DOCS_URL);
+  const minimum_version = await minimum_neovim_required(NVCHAD_INSTALL_DOCS_URL);
+  const is_installed = await is_neovim_installed();
+  console.log(`Minimum Neovim Version Required: ${minimum_version}`);
+  console.log(`Is Neovim installed: ${is_installed}`)
 }
 
 
